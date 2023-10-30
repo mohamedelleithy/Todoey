@@ -64,6 +64,7 @@ const Home: React.FC<HomeScreenProps> = (props) => {
           });
         } else {
           console.log(response.status);
+          alert("Invalid email or password");
         }
       });
     } catch (error) {
@@ -136,8 +137,6 @@ const Home: React.FC<HomeScreenProps> = (props) => {
           Don't have an account?{" "}
           <Pressable
             onPress={() => {
-              console.log("Pressed");
-              // code to move to other page
               props.navigation.navigate("Register");
             }}
           >

@@ -1,6 +1,6 @@
 import { DialogActionType } from "@aws-sdk/client-lex-runtime-v2";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Button,
   ScrollView,
@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
+import { Icon } from "@rneui/themed";
 export interface Task {
   id: string;
   text: string;
@@ -22,6 +22,9 @@ export default function Tasks() {
   const API_URL = "http://192.168.1.116:3000";
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState<Task[]>([]);
+  // create a ref for the edit task text input
+  const editTask = useRef<TextInput>(null);
+  const [isEditTask, setIsEditTask] = useState(false);
 
   const handleAddTask = async () => {
     if (task === "") {
@@ -205,14 +208,29 @@ export default function Tasks() {
               }}
             >
               <View style={{ flexDirection: "column" }}>
-                <TextInput
-                  style={styles.task}
-                  onEndEditing={(text) => {
-                    editTaskTitle(text.nativeEvent.text, task.id);
-                  }}
-                >
-                  {task.text}
-                </TextInput>
+                <View style={{ flexDirection: "row" }}>
+                  <Icon
+                    name={task.isDone ? "ios-checkmark" : "ios-close"}
+                    type="ionicon"
+                    color={task.isDone ? "green" : "red"}
+                  />
+                  <TextInput
+                    style={styles.task}
+                    onFocus={() => {
+                      setIsEditTask(true);
+                    }}
+                    onEndEditing={(text) => {
+                      editTaskTitle(text.nativeEvent.text, task.id);
+                      setIsEditTask(false);
+                    }}
+                    onBlur={() => {
+                      setIsEditTask(false);
+                    }}
+                    ref={editTask}
+                  >
+                    {task.text}
+                  </TextInput>
+                </View>
                 <Text
                   style={task.isDone ? styles.taskStatus : styles.pendingTask}
                 >
@@ -220,14 +238,31 @@ export default function Tasks() {
                 </Text>
               </View>
 
-              <TouchableOpacity
-                onPress={() => {
-                  handleDeleteTask(task.id);
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
-                style={styles.deleteButton}
               >
-                <Text style={styles.buttonText}>Delete</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    // highlight the task and allow user to edit the task
+                    editTask.current?.focus();
+                  }}
+                  style={styles.editButton}
+                >
+                  <Icon name="ios-pencil" type="ionicon" color="white" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    handleDeleteTask(task.id);
+                  }}
+                  style={styles.deleteButton}
+                >
+                  <Icon name="ios-trash" type="ionicon" color="white" />
+                </TouchableOpacity>
+              </View>
             </View>
           </TouchableOpacity>
         ))}
@@ -278,6 +313,15 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     justifyContent: "center",
     height: 40,
+  },
+  editButton: {
+    backgroundColor: "#007aff",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    justifyContent: "center",
+    height: 40,
+    marginRight: 5,
   },
   buttonText: {
     color: "#fff",
