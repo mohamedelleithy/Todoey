@@ -25,6 +25,7 @@ export default function Tasks() {
   let editTask = useRef<TextInput[]>([]);
   const [isEditTask, setIsEditTask] = useState(false);
   let textInputRef = useRef<TextInput>(null);
+  let [taskToBeEditedIndex, setTaskToBeEditedIndex] = useState(-1);
 
   const handleAddTask = async () => {
     // shut down the keyboard
@@ -195,7 +196,7 @@ export default function Tasks() {
           <Text style={styles.buttonText}>Add</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView>
+      <ScrollView keyboardShouldPersistTaps={"handled"}>
         {tasks.map((task, index) => (
           <TouchableOpacity
             key={index}
@@ -226,9 +227,11 @@ export default function Tasks() {
                     onEndEditing={(text) => {
                       editTaskTitle(text.nativeEvent.text, task.id);
                       setIsEditTask(false);
+                      setTaskToBeEditedIndex(-1);
                     }}
                     onBlur={() => {
                       setIsEditTask(false);
+                      setTaskToBeEditedIndex(-1);
                     }}
                     ref={(element) => {
                       if (element) {
@@ -257,14 +260,25 @@ export default function Tasks() {
               >
                 <TouchableOpacity
                   onPress={() => {
+                    if (taskToBeEditedIndex == index) {
+                      editTask.current?.[index].blur();
+                      setIsEditTask(false);
+                      setTaskToBeEditedIndex(-1);
+                      return;
+                    }
                     // highlight the task and allow user to edit the task
                     editTask.current?.[index].focus();
+                    setTaskToBeEditedIndex(index);
                     setIsEditTask(true);
                   }}
                   style={styles.editButton}
                 >
                   <Icon
-                    name={isEditTask ? "checkmark-outline" : "ios-pencil"}
+                    name={
+                      taskToBeEditedIndex == index
+                        ? "checkmark-outline"
+                        : "ios-pencil"
+                    }
                     type="ionicon"
                     color="white"
                   />
