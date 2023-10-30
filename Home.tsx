@@ -94,6 +94,9 @@ const Home: React.FC<HomeScreenProps> = (props) => {
           onBlur={() => {
             setIsEmailValid(validateEmail(email));
           }}
+          onTextInput={() => {
+            setIsEmailValid(validateEmail(email));
+          }}
         ></TextInput>
       </View>
       <View style={{ flexDirection: "row" }}>
@@ -107,6 +110,9 @@ const Home: React.FC<HomeScreenProps> = (props) => {
           onChangeText={setPassword}
           secureTextEntry
           onBlur={() => {
+            setIsPasswordValid(validatePassword(password));
+          }}
+          onTextInput={() => {
             setIsPasswordValid(validatePassword(password));
           }}
         ></TextInput>

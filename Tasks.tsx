@@ -1,3 +1,4 @@
+import { DialogActionType } from "@aws-sdk/client-lex-runtime-v2";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState } from "react";
 import {
@@ -23,7 +24,6 @@ export default function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   const handleAddTask = async () => {
-    // handle add task logic here
     if (task === "") {
       // alert user that task cannot be empty
       return;
@@ -111,6 +111,8 @@ export default function Tasks() {
       });
     } catch (error) {
       console.log(error);
+      // alert user that there is an error
+      alert("There is an error, please try again later");
     }
     return tasks;
   };
@@ -126,6 +128,33 @@ export default function Tasks() {
         },
         body: JSON.stringify({
           taskId: taskId,
+        }),
+      }).then((response) => {
+        if (response.status === 200) {
+          response.json().then(async (data) => {
+            loadTasks();
+          });
+        } else {
+          console.log(response.status);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function editTaskTitle(task: string, taskId: string) {
+    // call the api to edit the task title
+    try {
+      await fetch(API_URL + "/editTaskById", {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          taskId: taskId,
+          text: task,
         }),
       }).then((response) => {
         if (response.status === 200) {
@@ -169,22 +198,36 @@ export default function Tasks() {
             }}
           >
             <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
             >
               <View style={{ flexDirection: "column" }}>
-                <Text style={styles.task}>{task.text}</Text>
+                <TextInput
+                  style={styles.task}
+                  onEndEditing={(text) => {
+                    editTaskTitle(text.nativeEvent.text, task.id);
+                  }}
+                >
+                  {task.text}
+                </TextInput>
                 <Text
                   style={task.isDone ? styles.taskStatus : styles.pendingTask}
                 >
                   {task.isDone ? "Done" : "Not Done"}
                 </Text>
               </View>
-              <Button
+
+              <TouchableOpacity
                 onPress={() => {
                   handleDeleteTask(task.id);
                 }}
-                title="Delete"
-              ></Button>
+                style={styles.deleteButton}
+              >
+                <Text style={styles.buttonText}>Delete</Text>
+              </TouchableOpacity>
             </View>
           </TouchableOpacity>
         ))}
@@ -224,10 +267,22 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     paddingVertical: 5,
+    height: 40,
+    justifyContent: "center",
+    width: 80,
+  },
+  deleteButton: {
+    backgroundColor: "red",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    justifyContent: "center",
+    height: 40,
   },
   buttonText: {
     color: "#fff",
     fontWeight: "bold",
+    textAlign: "center",
   },
   taskContainer: {
     backgroundColor: "#f2f2f2",
@@ -241,9 +296,11 @@ const styles = StyleSheet.create({
   taskStatus: {
     fontSize: 16,
     color: "green",
+    marginBottom: 10,
   },
   pendingTask: {
     fontSize: 16,
     color: "red",
+    marginBottom: 10,
   },
 });

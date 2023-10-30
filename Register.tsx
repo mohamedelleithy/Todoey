@@ -15,6 +15,13 @@ const Register: React.FC<RegisterScreenProps> = (props) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const validateEmail = (email: string) => {
+    const regex = new RegExp(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+    return regex.test(email);
+  };
+
   const handleSignUp = () => {
     // handle sign up logic here
     if (email === "" || password === "" || confirmPassword === "") {
@@ -25,7 +32,7 @@ const Register: React.FC<RegisterScreenProps> = (props) => {
       // alert user that password and confirm password must be the same
       alert("Password and confirm password must be the same");
       return;
-    } else if (password == confirmPassword) {
+    } else if (password == confirmPassword && validateEmail(email)) {
       fetch(API_URL + "/register", {
         method: "POST",
         headers: {
@@ -42,6 +49,8 @@ const Register: React.FC<RegisterScreenProps> = (props) => {
           // redirect to login page
           props.navigation.navigate("Home");
           alert("Successfully registered!");
+        } else {
+          alert("Email already exists");
         }
       });
     }
