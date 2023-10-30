@@ -23,7 +23,7 @@ export default function Tasks() {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState<Task[]>([]);
   // create a ref for the edit task text input
-  const editTask = useRef<TextInput>(null);
+  let editTask = useRef<TextInput[]>([]);
   const [isEditTask, setIsEditTask] = useState(false);
 
   const handleAddTask = async () => {
@@ -226,7 +226,13 @@ export default function Tasks() {
                     onBlur={() => {
                       setIsEditTask(false);
                     }}
-                    ref={editTask}
+                    ref={(element) => {
+                      if (element) {
+                        editTask.current?.push(element as TextInput);
+                      } else {
+                        editTask.current?.pop();
+                      }
+                    }}
                   >
                     {task.text}
                   </TextInput>
@@ -248,7 +254,8 @@ export default function Tasks() {
                 <TouchableOpacity
                   onPress={() => {
                     // highlight the task and allow user to edit the task
-                    editTask.current?.focus();
+                    editTask.current?.[index].focus();
+                    setIsEditTask(true);
                   }}
                   style={styles.editButton}
                 >
