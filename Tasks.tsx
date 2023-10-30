@@ -18,6 +18,7 @@ export interface Task {
 }
 
 export default function Tasks() {
+  const API_URL = "http://192.168.1.116:3000";
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState<Task[]>([]);
 
@@ -28,7 +29,7 @@ export default function Tasks() {
       return;
     }
     try {
-      await fetch("http://192.168.1.116:3000/addTaskById", {
+      await fetch(API_URL + "/addTaskById", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -62,7 +63,7 @@ export default function Tasks() {
   const handleDeleteTask = async (taskId: string) => {
     // handle delete task logic here
     try {
-      await fetch("http://192.168.1.116:3000/deleteTaskById", {
+      await fetch(API_URL + "/deleteTaskById", {
         method: "DELETE",
         headers: {
           Accept: "application/json",
@@ -89,7 +90,7 @@ export default function Tasks() {
   const loadTasks = async () => {
     // handle load tasks logic here
     try {
-      await fetch("http://192.168.1.116:3000/tasksById", {
+      await fetch(API_URL + "/tasksById", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -117,7 +118,7 @@ export default function Tasks() {
   async function toggleDoneTask(taskId: string) {
     // mark task as done in the database, create a new api endpoint for this
     try {
-      await fetch("http://192.168.1.116:3000/toggleTaskStatusById", {
+      await fetch(API_URL + "/toggleTaskStatusById", {
         method: "PUT",
         headers: {
           Accept: "application/json",

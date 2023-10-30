@@ -13,6 +13,7 @@ import { HomeScreenProps } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home: React.FC<HomeScreenProps> = (props) => {
+  const API_URL = "http://192.168.1.116:3000";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(true);
@@ -43,7 +44,7 @@ const Home: React.FC<HomeScreenProps> = (props) => {
   const handleLogin = async () => {
     // handle login using the api
     try {
-      await fetch("http://192.168.1.116:3000/login", {
+      await fetch(API_URL + "/login", {
         method: "POST",
         headers: {
           Accept: "application/json",

@@ -7,3 +7,5 @@ export type RootStackParamList = {
 };
 
 export type HomeScreenProps = NativeStackScreenProps<RootStackParamList, "Home">;
+
+export type RegisterScreenProps = NativeStackScreenProps<RootStackParamList, "Register">;
