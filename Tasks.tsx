@@ -22,11 +22,14 @@ export default function Tasks() {
   const API_URL = "http://192.168.1.116:3000";
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState<Task[]>([]);
-  // create a ref for the edit task text input
   let editTask = useRef<TextInput[]>([]);
   const [isEditTask, setIsEditTask] = useState(false);
+  let textInputRef = useRef<TextInput>(null);
 
   const handleAddTask = async () => {
+    // shut down the keyboard
+    textInputRef.current?.blur();
+
     if (task === "") {
       // alert user that task cannot be empty
       return;
@@ -185,6 +188,7 @@ export default function Tasks() {
           style={styles.input}
           placeholder="Add a task"
           value={task}
+          ref={textInputRef}
           onChangeText={(text) => setTask(text)}
         />
         <TouchableOpacity style={styles.button} onPress={handleAddTask}>
@@ -259,7 +263,11 @@ export default function Tasks() {
                   }}
                   style={styles.editButton}
                 >
-                  <Icon name="ios-pencil" type="ionicon" color="white" />
+                  <Icon
+                    name={isEditTask ? "checkmark-outline" : "ios-pencil"}
+                    type="ionicon"
+                    color="white"
+                  />
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
