@@ -3,6 +3,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useRef, useState } from "react";
 import {
   Button,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -196,7 +198,13 @@ export default function Tasks() {
           <Text style={styles.buttonText}>Add</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView keyboardShouldPersistTaps={"handled"}>
+
+      <ScrollView
+        style={{
+          flex: 1,
+          flexDirection: "column",
+        }}
+      >
         {tasks.map((task, index) => (
           <TouchableOpacity
             key={index}

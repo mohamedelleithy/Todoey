@@ -5,6 +5,8 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { RegisterScreenProps } from "./types";
 
@@ -57,7 +59,10 @@ const Register: React.FC<RegisterScreenProps> = (props) => {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <Text style={styles.title}>Sign Up</Text>
       <TextInput
         style={styles.input}
@@ -84,7 +89,7 @@ const Register: React.FC<RegisterScreenProps> = (props) => {
       <TouchableOpacity style={styles.button} onPress={handleSignUp}>
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

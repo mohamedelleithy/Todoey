@@ -7,10 +7,13 @@ import {
   StatusBar,
   TextInput,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { HomeScreenProps } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { KeyboardAvoidingScrollView } from "react-native-keyboard-avoiding-scroll-view";
 
 const Home: React.FC<HomeScreenProps> = (props) => {
   const API_URL = "http://192.168.1.116:3000";
@@ -73,7 +76,11 @@ const Home: React.FC<HomeScreenProps> = (props) => {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      enabled
+    >
       <Text style={styles.titleText}>Welcome to Todoey</Text>
       <Text style={styles.descriptionText}>
         Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ex
@@ -132,19 +139,24 @@ const Home: React.FC<HomeScreenProps> = (props) => {
           Login
         </Text>
       </TouchableOpacity>
-      <View style={{ alignItems: "flex-end" }}>
-        <Text style={{ color: "#000", paddingTop: 20 }}>
+      <View
+        style={{
+          flexDirection: "row",
+          marginTop: 10,
+        }}
+      >
+        <Text style={{ color: "#000" }}>
           Don't have an account?{" "}
-          <Pressable
+          <TouchableOpacity
             onPress={() => {
               props.navigation.navigate("Register");
             }}
           >
-            <Text style={{ color: "blue", paddingTop: 20 }}>Sign Up</Text>
-          </Pressable>
+            <Text style={{ color: "blue" }}>Sign Up</Text>
+          </TouchableOpacity>
         </Text>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -154,7 +166,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     paddingTop: 20,
-
     justifyContent: "center",
   },
   titleText: {
